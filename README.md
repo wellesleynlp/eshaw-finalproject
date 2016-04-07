@@ -3,14 +3,14 @@ Shakespearean play character analysis
 
 ##Project Update
 
-#Did you meet your first milestone? Did you change your milestone?
+###Did you meet your first milestone? Did you change your milestone?
 
 My original milestone was two-fold:
 1) To have a function that parses Shakespeare's plays in a way that allows for easy analysis.
 2) To have a rough, initial start on character analysis.
 Both milestones have been met via a first pass/iteration. Further improvements can and may still happen based on need.
 
-#What have you finished so far? Include background reading, development, brainstorming, and results.
+###What have you finished so far? Include background reading, development, brainstorming, and results.
 
 Background reading:
 Most of the background reading for this project were accomplished before the project proposal was submitted.
@@ -25,12 +25,12 @@ Brainstorming:
 1) Our recent topics on context vectors has been inspiring me to start thinking about ways I could implement the concept into my analysis. As an outcome of the A5 assignment, I hope to reuse that code for my character analysis.
 2) While reading the canonical literary works on Shakespearean character analysis, a reoccurring theme is understanding characters through their relational distances to other characters. I currently have a way of visualizing this, but am still bouncing around ideas on how I can convert this into measurable quantities.
 
-#You should aim to have *some* results by the update. Describe them.
-#Are the results satisfactory? If they aren't, what do you plan to modify/add?
+###You should aim to have *some* results by the update. Describe them.
+###Are the results satisfactory? If they aren't, what do you plan to modify/add?
 
 The analysis on measuring the distance between character pairs currently returns character pairs that have the shortest distance as a proxy for "similarity". After a first pass on implementing this, a major obstacle I'm running into is a lack of symetry between character pairs. Character A will be paired with Character B with a distance of alpha but Character B will be paired with Character C with a distance of beta. I'm in the process of analyzing the results to 1) figure out where the calculations went wrong, and 2) compare the relative differences in the distance values (since the range seems particularly high for normalize percentage values). Since I'm only just starting on the character analysis, I have a lot of analysis approachs I want to test out first to see which methods make sense and return sensible results.
 
 
-#Updates to your project plan, like goals and techniques that have changed since your proposal.
+###Updates to your project plan, like goals and techniques that have changed since your proposal.
 
 Most of the project plan has remained the same. The only addition I'm interested in adding is a visual aspect, to make my results more understandable and summarize them in a more efficient method.
