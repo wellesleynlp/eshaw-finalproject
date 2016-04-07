@@ -1,0 +1,122 @@
+import nltk
+import sys
+import numpy as np
+
+def get_text(xmlplay):
+    '''
+    loads a shakespeare xml file and returns a dictionary in the form of 
+    {charachter: ['tokenized','text']}
+    '''
+    xml = nltk.corpus.shakespeare.xml(xmlplay)
+    new = {}
+    for i in xml.getiterator():
+
+        # detect characters
+        if i.text and i.tag == 'SPEAKER':
+            char = i.text
+            if char not in new.keys():
+                new[char]=[]
+        # detect words
+        if i.text and i.tag == 'LINE':
+            mytext = i.text
+            for word in nltk.wordpunct_tokenize(mytext):
+                # word for word, tag in withloc if tag not in ['.',',',';','"','?','\'']
+                new[char].append(word)
+    return new
+
+def charactersummary(xmlplay):
+    '''
+    Loads a Shakespeare xml file (Bosak) and makes calculations
+    on the characters
+    '''
+    textinfo = {}
+    new = get_text(xmlplay)
+    xml = nltk.corpus.shakespeare.xml(xmlplay)
+    
+    textinfo['numberofspeakers'] = len(new) #number of uniquely named speakers
+    textinfo['wordsperchar'] = { char: len(lines) for char,lines in new.items() } #tokenized words for each uniquely named speaker
+    #print new.items()
+    textinfo['yes'] = [] # % of tokenized words are "yes"
+    textinfo['no'] = [] # % of tokenized words are "no"
+    textinfo['majorcharlist'] = [] # major character list
+    textinfo['hapaxes'] = [] # num of vocab that only occured once
+    textinfo['vocab'] = [] # num of vocab that is used more than once
+    textinfo['length_list'] = [] # num of repeated words
+    textinfo['questionmarks'] = [] # % of tokenized words are ?
+    textinfo['exclammarks'] = [] # % of tokenized words are !
+    # textinfo['book'] = new # dict of each character's tokenized words
+    for char, words in new.items():
+        if len(words)>100: # for the major capitalized characters
+            textinfo['majorcharlist'].append(char)
+            fdist = nltk.FreqDist(words)
+            textinfo['hapaxes'].append(len(fdist.hapaxes()))
+            textinfo['vocab'].append(len(fdist)-len(fdist.hapaxes()))
+            textinfo['length_list'].append(len(words)-len(fdist))
+            textinfo['yes'].append( fdist.freq('yes')+fdist.freq('Yes'))
+            textinfo['no'].append( fdist.freq('no')+fdist.freq('No'))
+            textinfo['questionmarks'].append( fdist.freq('?'))
+            textinfo['exclammarks'].append( fdist.freq('!'))
+    return textinfo
+        
+
+def pos_per_char(words):
+    '''
+    Loads a tokenized list of words like ['The', 'house', 'is' ]  and creates a list of tuples in the form
+    of [('The','NP'), ('house','NN'),('is'),('VP)...] for further processing.
+    Lots of CPU use!
+    '''
+
+    withloc = nltk.pos_tag(words) # tag all tokenized words
+    fdist = nltk.FreqDist([word for word, tag in withloc if tag not in ['.',',',';','"','?','\''] and tag !=  'NP']) # the freq distribution of all words
+    types = nltk.FreqDist(tag for word, tag in withloc) # counts of all the different tags used
+    pronouns = set([word for word, tag in withloc if tag == 'PRP']) # set of all used pronouns
+    nouns = set([word for word, tag in withloc if tag.startswith('NN')]) #and fdist.freq(word)>4]) #set of all nouns used
+    info = {'pos_words': withloc, 'pronouns': pronouns, 'pos types': types.items(), 'fdist': fdist, 'nouns': nouns } # pos types returns count distr of words
+
+    return info
+
+def main(file_path):
+    stats = charactersummary(file_path)
+    # print stats['majorcharlist']
+
+    # for key in stats.keys():
+    #     try:
+    #         print key, stats[key]
+    #         continue
+    #     except (RuntimeError, TypeError, NameError):
+    #         print stats[key]
+
+    identity_matrix = {}
+    metrics = ['vocab', 'hapaxes', 'no', 'yes', 'exclammarks', 'questionmarks', 'length_list']
+
+    for i, character1 in enumerate(stats['majorcharlist']):
+        identity_array = []
+        for j, character2 in enumerate(stats['majorcharlist']):
+            if (character1 != character2):
+                distance = 0
+                for metric in metrics:
+                    # print stats[metric]
+                    if stats[metric][0] > 1:
+                        distance += ((stats[metric][i]-stats[metric][j])/stats[metric][i])**2
+                    else:
+                        distance += (stats[metric][i] - stats[metric][j])**2
+                identity_array.append((character2, distance**.5))
+        identity_matrix[character1] = identity_array
+        # print character1, min(identity_matrix[character1])
+    print identity_matrix
+
+    similarity = []
+    for character in identity_matrix.keys():
+        distances = [dist for name,dist in identity_matrix[character]]
+        similarity.append((character, min(distances), stats['majorcharlist'][distances.index(min(distances))]))
+        # print character + ' is similar to ' + stats['majorcharlist'][distances.index(min(distances))]
+    
+    for pair in similarity:
+        print pair
+
+    # with open("Output_test.txt", "w") as outfile:
+    #     outfile.write("%s" % speeches)
+
+if __name__ == '__main__':
+    main('all_well.xml');
+    # main(sys.argv[0])
