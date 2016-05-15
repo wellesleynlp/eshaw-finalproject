@@ -1,80 +1,97 @@
 import nltk
 import sys
+import csv
+import string
+import os
+import fnmatch
 
-def get_text(xmlplay):
+def get_text(xmlplay, play_name, punctuation=False):
     '''
     loads a shakespeare xml file and returns a dictionary in the form of 
     {charachter: ['tokenized','text']}
     '''
     xml = nltk.corpus.shakespeare.xml(xmlplay)
     new = {}
-    for i in xml.getiterator():
 
-        # detect characters
-        if i.text and i.tag == 'SPEAKER':
-            char = i.text
-            if char not in new.keys():
-                new[char]=[]
-        # detect words
-        if i.text and i.tag == 'LINE':
-            mytext = i.text
-            for word in nltk.wordpunct_tokenize(mytext):
-            	# word for word, tag in withloc if tag not in ['.',',',';','"','?','\'']
-                new[char].append(word)
+    if punctuation==False:
+        for i in xml.getiterator():
+
+            # detect characters
+            if i.text and i.tag == 'SPEAKER':
+                char = i.text.lower()
+                name = char +' ('+ play_name+')'
+                if name not in new.keys():
+                    new[name]=[]
+
+            # detect words
+            if i.text and i.tag == 'LINE':
+                mytext = i.text
+                for word in nltk.wordpunct_tokenize(mytext):
+                    cur_word = word.lower().translate(None, string.punctuation)
+                    if cur_word not in ['']:
+                        new[name].append(cur_word)
+                	# word for word, tag in withloc if tag not in ['.',',',';','"','?','\'']
+                    # new[char].append(word)
+        # words = [word for word in new if word not in ['.',',',';','"','?','\'']]
+    elif punctuation:
+        for i in xml.getiterator():
+
+            # detect characters
+            if i.text and i.tag == 'SPEAKER':
+                char = i.text.lower()
+                name = char +' ('+ play_name+')'
+                if name not in new.keys():
+                    new[name]=[]
+            # detect words
+            if i.text and i.tag == 'LINE':
+                mytext = i.text
+                for word in nltk.wordpunct_tokenize(mytext):
+                    # cur_word = word.lower()
+                    new[name].append(word)
     return new
 
-def relationbyword(words):
+def csv_file(file_path, dir, play):
     '''
-    takes a dictionary {charachter: ['tokenized','text']} and plots the
-    conditional verbs per character if they say more than 100 lines
+    takes dictionary created by get_text function and creates csv files
+    of the tokenized words for each major character (defined as having
+    over 500 words) 
     '''
-    conditionals = nltk.defaultdict(dict)
-    try:
-        for char, text in words.items():
-            tagged = nltk.pos_tag(text)
-            conditionals[char] =  nltk.FreqDist(
-                [positionedword for positionedword,
-                tag in tagged if tag == 'MD']).items()  
+    speeches = get_text(file_path, play, True)
 
-        return conditionals
-    except AttributeError:
-        print "please enter a dictionary in the form of {character: ['tokenized','text']} "
+    for character in speeches.keys():
+        if len(speeches[character]) > 500:
+            wr_file_to = os.path.join(dir, 'csv/')
+            csvfile = csv.writer(open(wr_file_to+character+".csv", "wb"), delimiter = ',')
+            csvfile.writerow(speeches[character])
 
-def graphrelation(words,conditionals):
+def txt_file(file_path, dir, play):
     '''
-    given a speech list in the form of {'YOUNG SIWARD': ['What', 'is','thy',
-    'name','?'], } creates a graphviz map of conditionals per (important)
-    character
+    takes dictionary created by get_text function and creates txt files
+    of all lines spoken by each major character (defined as having
+    over 500 words) 
     '''
-    import pydot
+    speeches = get_text(file_path, play, True)
 
-    all = []
-    for char, words in conditionals.items():
-        for word in words:
-            all.append((char,word[0].lower()))
-
-            
-    graphic = pydot.graph_from_edges(all)
-    for char in conditionals:
-        new = pydot.Node(char,color='green',shape='doubleoctagon',fontname='Arial',fontsize='12',rank='source', ranksep = '1.2')
-        graphic.add_node(new)
-    for char, word in all:
-        new = pydot.Node(word,color='purple',shape='note',fontname='Arial',fontsize='8')
-        graphic.add_node(new)
+    for character in speeches.keys():
+        if len(speeches[character]) > 500:
+            wr_file_to = os.path.join(dir, 'txt/')
+            txtfile = open(wr_file_to+character+".txt", "wb")
+            txtfile.write(' '.join(speeches[character]))
 
 
-    graphic.set_overlap('TRUE')
-    graphic.set_splines('True')
-    graphic.set_suppress_disconnected('TRUE')
-    graphic.write_png('test.png',prog='twopi')
+def main(text_path, store_path):
+    '''
+    Creates csv and txt files for each major character at specified location
+    '''
+    for subdir, dirs, files in os.walk(text_path):
+        for file in files:
+            if fnmatch.fnmatch(file, '*.xml'):
+                print file
+                path = os.path.join(text_path, file)
+                csv_file(path, store_path, file[0:-4])
+                txt_file(path, store_path, file[0:-4])
 
-def main(file_path):
-    speeches = get_text(file_path)
-    print speeches
 
-    # with open("Output_test.txt", "w") as outfile:
-    #     outfile.write("%s" % speeches)
 
 if __name__ == '__main__':
-    main('all_well.xml');
-    # main(sys.argv[0])
+    main(sys.argv[1], sys.argv[2])
