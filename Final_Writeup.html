@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<title></title>
+	<meta name="generator" content="LibreOffice 4.2.8.2 (Linux)">
+	<meta name="created" content="20160514;230046667007045">
+	<meta name="changed" content="0;0">
+	<style type="text/css">
+	<!--
+		@page { margin: 0.79in }
+		p { margin-bottom: 0.1in; line-height: 120% }
+		p.sdfootnote { margin-left: 0.24in; text-indent: -0.24in; margin-bottom: 0in; font-size: 10pt; line-height: 100% }
+		a.sdfootnoteanc { font-size: 57% }
+	-->
+	</style>
+</head>
+<body lang="en-US" dir="ltr">
+<p style="text-indent: 0.5in; margin-bottom: 0.38in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 152%; orphans: 1">
+<font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt">For
+this project, I wanted to focus on the interdisciplinary aspect of
+the NLP field. At the same time, I wanted to add to my data scientist
+toolkit, since this is the field I will be pursuing my graduate
+degree in. The result was a final project that focused less on the
+creation of algorithms, but an implementation of existing algorithms
+(as part of the SciKit-Learn Python package) to conduct character
+similarity analysis on Shakespeare's characters. The chosen topic
+stemmed from my inherently interdisciplinary interest (I am a liberal
+arts student, after all), but particularly because as an aspiring
+data scientist, I didn't want to simply play with data – I wanted
+to see what story the data could tell, to discover the connections
+hidden within the data. I naturally gravitated towards Shakespeare's
+work for two reasons. The first being that the only information
+provided for each character in plays are the words spoken and actions
+taken by the characters themselves. And so, natural language
+processing seemed highly compatible with this nature of character
+analysis. And while there are many plays to choose from,
+Shakespeare's work has fascinated people for centuries and the
+characters, as well as stereotypes, he created are renown. </font></font></font>
+</p>
+<p style="text-indent: 0.5in; margin-bottom: 0.38in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 152%; orphans: 1">
+<font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt">Having
+no better inspiring place to start, I began considering the project
+from a literary perspective. For Shakespearean scholars, there are
+three realms of considerations that shape any analytical comparisons
+among various Shakespearean characters.  The first considers
+characters based on how their beliefs and actions change over the
+course of the play<a class="sdfootnoteanc" name="sdfootnote1anc" href="#sdfootnote1sym"><sup>1</sup></a>.
+Some characters change from outstanding moral citizens to vengeful
+murders, some go from sworn bachelors to bring married, and others
+remain stubbornly unchanged over the course of events in the play.
+While this analysis approach gives a lot of complexities, the
+temporal consideration based on morality and characters' decisions
+would be a hard approach to translate into a computation equivalent. </font></font></font>
+</p>
+<p style="text-indent: 0.5in; margin-bottom: 0.38in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 152%; orphans: 1">
+<font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt">The
+second realm of consideration analyses characters within the larger
+realm of Shakespeare's common themes<a class="sdfootnoteanc" name="sdfootnote2anc" href="#sdfootnote2sym"><sup>2</sup></a>.
+Some character personae will include the suspicious lover, the leader
+risen to power via mutiny, the witty young lady seeking a suitor etc.
+This approach of considering characters within their contextual
+themes paired well with existing information retrieval inherent in
+Term Frequency- Inverse Document Frequency statistical analysis. This
+analysis would be able to separate out characters from similarly
+themed situations, whether this is in their role within the play or
+the genre of play that they are in. Due to the high number of
+components associated with this analysis, I modified the results to
+lower the number of dimensions using Principle Component analysis
+(PCA) and used only the most distinguishing dimensions across all
+characters. While TF-IDF would give the vocabulary context for each
+character, I also needed to account for the clear genre divides which
+would make distinguishing characters from similar genre plays less
+distinctive. Fortunately, this was something that the third approach
+somewhat resolves.</font></font></font></p>
+<p style="text-indent: 0.5in; margin-bottom: 0.38in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 152%; orphans: 1">
+<font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt">The
+third literary approach to takes on the historical context of these
+plays being consistently played by the same set of actors<a class="sdfootnoteanc" name="sdfootnote3anc" href="#sdfootnote3sym"><sup>3</sup></a>.
+It is known that Shakespeare often wrote his characters with the
+physical attributes and acting abilities of his actors in mind. As
+such, there should be a natural connection among characters from
+different plays based on the actors that portrayed them. Converting
+this form of analysis to a computational equivalent was less straight
+forward. If Shakespeare's characters were written to be played by
+specific actors, I hypothesized that actors would have some sort of
+verbal acting ticks that would permeate the different characters in
+similar roles. Here, I took inspiration from the work of Bamman et
+al.<a class="sdfootnoteanc" name="sdfootnote4anc" href="#sdfootnote4sym"><sup>4</sup></a>
+which considered film characters based on grammatical dependencies
+inherent in the chosen verbs, adjectives, and noun modifiers
+associated with each named character. The work, however, considered
+third party summary descriptions of characters whereas Shakespeare's
+characters own their own set of diction. Considering the characters
+based on the verbal ticks of the actors, I was interested in looking
+at the verbal ticks associated with the distribution of active versus
+passive verbs, as well as the distribution of descriptive attributes,
+and the amount of modifiers.</font></font></font></p>
+<p style="text-indent: 0.5in; margin-bottom: 0.38in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 152%; orphans: 1">
+<font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt">With
+two somewhat unrelated considerations on hand, I needed to find a way
+to combine the two into a meaningful entity. The timing of the topic
+covered in class led me to consider vector space. Within the context
+of vector space, I would not need to forcefully combine the two
+entities, but could consider them as orthogonal dimensions. With this
+set of features in place for describing each character in
+quantitative form, the next consideration was how one would measure
+similarity. I naturally began with cosine similarity, since it was
+covered in conjunction with vector space. But the results were too
+granular; for each character, I could list the set of others that the
+character most closely, or distantly, resembled, but it didn't give
+me a whole picture on how all characters were inter-related. </font></font></font>
+</p>
+<p style="text-indent: 0.5in; margin-bottom: 0.38in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 152%; orphans: 1">
+<font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt">I
+set out to look for character personae, which implicated a group of
+characters. The need to group characters naturally led me to k-means
+clustering. And while this method was not as conducive to identifying
+opposite character groups, it gave a clearer big picture look at
+similar characters. In the end, while the original goal of my final
+project was reached, my curiosity took over and I was interested in
+seeing how consistent the results from these two similarity analyses
+were. I wrote a function that calculated the percentage overlap
+between the two results.</font></font></font></p>
+<p style="text-indent: 0.5in; margin-bottom: 0.38in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 152%; orphans: 1">
+<font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt">The
+first set of results divided the set of 443 primary characters into
+66 clusters (a number that was chosen based on minimizing inertia and
+optimizing inertia change). The overlap between cosine similarity and
+cluster similarity was at 56%. As the percentage suggests, the
+results were mixed, which also included clusters made up of one
+single character. The isolation of these individual characters were
+not convincing, as many of them were very much considered iconic
+figures (such as Othello and Brutus) which should have resembled a
+handful of others theme-wise (it is coincidental that both these
+character were historically played by different actors). For the more
+populated clusters, there were a few successful results which
+included a cluster which grouped Romeo, Cleopatra, Prospero, and
+Leontes together, all of whom are some of Shakespeare's more
+melodramatic characters. Perhaps it was due to the number of possible
+clusters, but most clusters did not show a clear theme of division.
+For example, my favorite poorly paired character set included Titus
+Andronicus, Mark Antony, and Rosalind, all of whom are as different
+in dispositions from the others as Romeo is from Othello.</font></font></font></p>
+<p style="text-indent: 0.5in; margin-bottom: 0.38in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 152%; orphans: 1">
+<font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt">At
+12 clusters, the overlap between cosine similarity and clustering is
+100%. Here, looking at the smaller clusters (there are 3 large
+clusters that act as miscellaneous groupings) , we start seeing some
+promising groupings. We see a cluster containing some of
+Shakespeare's stronger female characters including Lady Macbeth, Joan
+of Arc, the nurse from Romeo and Juliet, Queen Elizabeth, and Helena
+from Midsummer. Other renowned strong female characters ended up in
+the miscellaneous groups, which is unfortunate, but more accurate
+than if they were grouped elsewhere. In another cluster, we see some
+of Shakespeare's Tragic leaders including Mark Antony, King Lear,
+Othello, Brutus, and King Richard II. While these results are more
+promising then the first run, there's a lot of information and
+existing divisions that my analyses is not picking up on. The
+pessimist in me would rather chalk up these few examples of
+successful results to coincidence than some form of literary
+accuracy.</font></font></font></p>
+<p style="text-indent: 0.5in; margin-bottom: 0.38in; border: none; padding: 0in; line-height: 152%; orphans: 1">
+<span style="font-variant: normal"><font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt"><span style="font-style: normal"><span style="font-weight: normal">The
+implementation of this project helped me </span></span></font></font></font></span><span style="font-variant: normal"><font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt"><span style="font-style: normal"><span style="font-weight: normal">practice</span></span></font></font></font></span><span style="font-variant: normal"><font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt"><span style="font-style: normal"><span style="font-weight: normal">
+many of my personal goals of adding to my data science toolkit, some
+of which included learning how to use existing algorithms from
+libraries, setting up a database, and </span></span></font></font></font></span><span style="font-variant: normal"><font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt"><span style="font-style: normal"><span style="font-weight: normal">having
+to work with </span></span></font></font></font></span><span style="font-variant: normal"><font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt"><span style="font-style: normal"><span style="font-weight: normal">library
+</span></span></font></font></font></span><span style="font-variant: normal"><font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt"><span style="font-style: normal"><span style="font-weight: normal">wrappers
+between different coding languages (Stanford's coreNLP package is
+implemented in Java)</span></span></font></font></font></span><span style="font-variant: normal"><font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt"><span style="font-style: normal"><span style="font-weight: normal">.
+Many of my implementations are only first iteration considerations;
+much of the future work that can be done in continuing this project
+would focus on creating depth of analysis and feature generation.
+Personally, through this project, I realized that the difficulty in
+analyzing literature comes from the complexity of feature generation.
+If I've learned nothing else from this class, it is that analysis
+ends up doing better the more we are willing to let go of our human
+understanding of language (letting go of linguistics; letting go of
+traditional, human literary analyses). While it was interesting to
+implement the computational equivalent of literary analyses, for
+future work, I would focus a lot more on finding ways to generate
+meaningful </span></span></font></font></font></span><span style="font-variant: normal"><font color="#444444"><font face="Helvetica Neue, Helvetica, Arial, serif"><font size="3" style="font-size: 11pt"><span style="font-style: normal"><span style="font-weight: normal">context
+sensitive features.</span></span></font></font></font></span></p>
+<div id="sdfootnote1">
+	<p class="sdfootnote" style="font-weight: normal"><font face="Liberation Serif, serif"><font size="2"><a class="sdfootnotesym" name="sdfootnote1sym" href="#sdfootnote1anc">1</a><span style="font-variant: normal"><font color="#333333"><span style="font-style: normal">Fallon,
+	Robert Thomas.&nbsp;</span></font></span><span style="font-variant: normal"><font color="#333333"><i>A
+	Theater-Goer's Guide to Shakespeare's </i></font></span><span style="font-variant: normal"><font color="#333333"><i>Characters</i></font></span><span style="font-variant: normal"><font color="#333333"><span style="font-style: normal">.
+	Chicago: Ivan R Dee, 200</span></font></span><span style="font-variant: normal"><font color="#333333"><span style="font-style: normal">4</span></font></span><span style="font-variant: normal"><font color="#333333"><span style="font-style: normal">.
+	Print.</span></font></span></font></font></p>
+</div>
+<div id="sdfootnote2">
+	<p class="sdfootnote" style="font-weight: normal"><font face="Liberation Serif, serif"><font size="2"><a class="sdfootnotesym" name="sdfootnote2sym" href="#sdfootnote2anc">2</a><span style="font-variant: normal"><font color="#333333"><span style="font-style: normal">Fallon,
+	Robert Thomas.&nbsp;</span></font></span><span style="font-variant: normal"><font color="#333333"><i>A
+	Theater-Goer's Guide to Shakespeare's Themes</i></font></span><span style="font-variant: normal"><font color="#333333"><span style="font-style: normal">.
+	Chicago: Ivan R Dee, 2002. Print.</span></font></span></font></font></p>
+</div>
+<div id="sdfootnote3">
+	<p class="sdfootnote" style="font-weight: normal"><font face="Liberation Serif, serif"><font size="2"><a class="sdfootnotesym" name="sdfootnote3sym" href="#sdfootnote3anc">3</a><span style="font-variant: normal"><font color="#333333"><span style="font-style: normal">Baldwin,
+	Thomas Whitefiled.&nbsp;</span></font></span><span style="font-variant: normal"><font color="#333333"><i>The
+	Organization and Personnel of the Shakespearean Company</i></font></span><span style="font-variant: normal"><font color="#333333"><span style="font-style: normal">.
+	Princeton: Princeton UP, 1927. Print.</span></font></span></font></font></p>
+</div>
+<div id="sdfootnote4">
+	<p class="sdfootnote" style="font-variant: normal; font-style: normal; font-weight: normal">
+	<font color="#333333"><font face="Liberation Serif, serif"><font size="2"><a class="sdfootnotesym" name="sdfootnote4sym" href="#sdfootnote4anc">4</a>Bamman,
+	David, Brendan O'Connor, and Noah A. Smith. &quot;Learning Latent
+	Personas of Film Characters.&quot;&nbsp;Proceedings of the Annual
+	Meeting of the Association for Computational Linguistics
+	(ACL)&nbsp;(2014): 352-61. Web.</font></font></font></p>
+</div>
+</body>
+</html>

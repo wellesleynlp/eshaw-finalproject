@@ -10,110 +10,109 @@ from sklearn.decomposition import PCA
 from sklearn.metrics.pairwise import cosine_similarity
 
 def get_pca_tfidf(dir_path, components=0):
-	'''
+    '''
     reads all character's csv files and finds the TF-IDF for each character,
     treating each character's file as a single document. A PCA (principle
     Component Analysis) is run on these values and filtered for the most 
-	principled dimensions (threshold set at .5%). Function returns 2 
-	variables, 1) the list of characters in order of processing 2) the 
-	filtered principle values of the PCA
+    principled dimensions (threshold set at .5%). Function returns 2 
+    variables, 1) the list of characters in order of processing 2) the 
+    filtered principle values of the PCA
     '''
-	list_of_characters_csv=[]
-	token_dict = collections.defaultdict(list)
-	similarity_dict = collections.defaultdict(list)
+    list_of_characters_csv=[]
+    token_dict = collections.defaultdict(list)
+    similarity_dict = collections.defaultdict(list)
 
-	for subdir, dirs, files in os.walk(os.path.join(dir_path, 'csv')):
-	    print 'Number of files present: ' + str(len(files))
-	    for file in files:
-	        list_of_characters_csv.append(file[0:-4])
-	        file_path = subdir + os.path.sep + file
-	        shakes = open(file_path, 'r')
-	        text = shakes.read()
-	        token_dict[file] = text
+    for subdir, dirs, files in os.walk(os.path.join(dir_path, 'csv')):
+        print 'Number of files present: ' + str(len(files))
+        for file in files:
+            list_of_characters_csv.append(file[0:-4])
+            file_path = subdir + os.path.sep + file
+            shakes = open(file_path, 'r')
+            text = shakes.read()
+            token_dict[file] = text
 
-	# find TF-IDF
-	tf = TfidfVectorizer(analyzer='word', min_df = 0)
-	tfidf_matrix =  tf.fit_transform(token_dict.values())
+    # find TF-IDF
+    tf = TfidfVectorizer(analyzer='word', min_df = 0)
+    tfidf_matrix =  tf.fit_transform(token_dict.values())
 
-	# conduct PCA
-	if (components == 0):
-		pca = PCA()
-		pca_tfidf = pca.fit_transform(tfidf_matrix.toarray())
-		sig_components = [x for x in pca.explained_variance_ if x > .005]
+    # conduct PCA
+    if (components == 0):
+        pca = PCA()
+        pca_tfidf = pca.fit_transform(tfidf_matrix.toarray())
+        sig_components = [x for x in pca.explained_variance_ if x > .005]
 
-		pca = PCA(n_components = len(sig_components))
-		return list_of_characters_csv, pca.fit_transform(tfidf_matrix.toarray())
-	else:
-		pca = PCA(n_components = components)
-		return list_of_characters_csv, pca.fit_transform(tfidf_matrix.toarray())
+        pca = PCA(n_components = len(sig_components))
+        return list_of_characters_csv, pca.fit_transform(tfidf_matrix.toarray())
+    else:
+        pca = PCA(n_components = components)
+        return list_of_characters_csv, pca.fit_transform(tfidf_matrix.toarray())
 
 def get_char_grammar(dir_path):
-	'''
+    '''
     cleans all character's txt files and finds the character's set of verbs,
     attributes, and modifier words. Function returns 5 variables:
     1) the list of characters in order of processing 
-	2) the dictionary of every character's list of sentences {'character': ['sentence 1', 'sentence 2']}
-	3) the character's set of verb words
-	4) the character's set of attribute words
-	5) the character's set of modifier words
+    2) the dictionary of every character's list of sentences {'character': ['sentence 1', 'sentence 2']}
+    3) the character's set of verb words
+    4) the character's set of attribute words
+    5) the character's set of modifier words
     '''
-	list_of_characters_txt=[]
-	charact_vocab = collections.defaultdict(list)
-	tagged_vocab = collections.defaultdict(list)
-	charact_sents = collections.defaultdict(list)
-	charact_verbs = collections.defaultdict(list)
-	charact_attrs = collections.defaultdict(list)
-	charact_mods = collections.defaultdict(list)
-	attrsets = collections.defaultdict(list)
-	modsets = collections.defaultdict(list)
-	verbsets = collections.defaultdict(list)
+    list_of_characters_txt=[]
+    charact_vocab = collections.defaultdict(list)
+    tagged_vocab = collections.defaultdict(list)
+    charact_sents = collections.defaultdict(list)
+    charact_verbs = collections.defaultdict(list)
+    charact_attrs = collections.defaultdict(list)
+    charact_mods = collections.defaultdict(list)
+    attrsets = collections.defaultdict(list)
+    modsets = collections.defaultdict(list)
+    verbsets = collections.defaultdict(list)
 
-	for subdir, dirs, files in os.walk(os.path.join(dir_path, 'txt')):
-	    print 'Number of files present: ' + str(len(files))
-	    for file in files:
-	        character_name = file[0:-4]
-	        list_of_characters_txt.append(character_name)
-	        file_path = subdir + os.path.sep + file
-	        shakes = open(file_path, 'r')
-	        corpus = shakes.read()
-	        charact_vocab[character_name] = corpus.split(" ")
-	        tagged_vocab[character_name] = nltk.pos_tag(corpus.split(" "))
-	        charact_sents[character_name] = re.split('[?!;.:]',corpus)
-	        del charact_sents[character_name][-1]
-	        
-	        verbs = []
-	        attrs = []
-        	mods = []
-	        for pair in tagged_vocab[character_name]:
-	            word, tag = pair
-	            if re.search('V', tag):
-	                verbs.append(word)
-	            if re.search('JJ', tag) or re.search('NN', tag):
-                	attrs.append(word)
-	            if re.search('JJ', tag) or re.search('RB', tag):
-	                mods.append(word)
-	        charact_verbs[character_name] = verbs
-	        verbsets[character_name] = set(verbs)
-	        charact_attrs[character_name] = attrs
-	        attrsets[character_name] = set(attrs)
-	        charact_mods[character_name] = mods
-	        modsets[character_name] = set(mods)
-	return list_of_characters_txt, charact_sents, verbsets, attrsets, modsets
+    for subdir, dirs, files in os.walk(os.path.join(dir_path, 'txt')):
+        print 'Number of files present: ' + str(len(files))
+        for file in files:
+            character_name = file[0:-4]
+            list_of_characters_txt.append(character_name)
+            file_path = subdir + os.path.sep + file
+            shakes = open(file_path, 'r')
+            corpus = shakes.read()
+            charact_vocab[character_name] = corpus.split(" ")
+            tagged_vocab[character_name] = nltk.pos_tag(corpus.split(" "))
+            charact_sents[character_name] = re.split('[?!;.:]',corpus)
+            del charact_sents[character_name][-1]
+            
+            verbs = []
+            attrs = []
+            mods = []
+            for pair in tagged_vocab[character_name]:
+                word, tag = pair
+                if re.search('V', tag):
+                    verbs.append(word)
+                if re.search('JJ', tag) or re.search('NN', tag):
+                    attrs.append(word)
+                if re.search('JJ', tag) or re.search('RB', tag):
+                    mods.append(word)
+            charact_verbs[character_name] = verbs
+            verbsets[character_name] = set(verbs)
+            charact_attrs[character_name] = attrs
+            attrsets[character_name] = set(attrs)
+            charact_mods[character_name] = mods
+            modsets[character_name] = set(mods)
+    return list_of_characters_txt, charact_sents, verbsets, attrsets, modsets
 
 def get_grammar(dir_path, dbug=False):
-	'''
+    '''
     takes character's sentences (found with get_char_grammar) and counts
     the number of Agent Verbs (AV), Patient Verbs(PV), Attributes(Attr), 
     and Modifiers (Mod).
     (the first three are as described by Bamman et al., 2014; see project
-    proposal for citation)
-
-	Function returns 2 variables:
+    proposal for citation).
+    Function returns 2 variables:
     1) the list of characters in order of processing 
-	2) the count matrix of each dependency case's occurance, with 4 columns 
-	(one for each type of dependency set(AV, PV, Attr, Mod)), and each row 
-	represents one character's set of dependency type counts. 
-		(size of matrix will be len(characters)X4)
+    2) the count matrix of each dependency case's occurance, with 4 columns 
+    (one for each type of dependency set(AV, PV, Attr, Mod)), and each row 
+    represents one character's set of dependency type counts. 
+    (size of matrix will be len(characters)X4)
     '''
     server = jsonrpc.ServerProxy(jsonrpc.JsonRpc20(),jsonrpc.TransportTcpIp(addr=("127.0.0.1", 8080)))
     list_of_characters_txt, charact_sents, verbsets, attrsets, modsets = get_char_grammar(dir_path)
@@ -134,7 +133,7 @@ def get_grammar(dir_path, dbug=False):
         cur_attrset = attrsets[character]
         cur_modset = modsets[character]
         for s, sentence in enumerate(charact_sents[character]):
-        	# pre-process the sentence and make sure corenlp works for it
+            # pre-process the sentence and make sure corenlp works for it
             if len(sentence) == 0:
                 continue
             elif sentence[0] in set(string.punctuation):
@@ -170,24 +169,24 @@ def get_grammar(dir_path, dbug=False):
     return list_of_characters_txt, char_dep
 
 def get_context_matrix(A,B):
-	'''
-	Z-score matrix B and combine it with matrix A.
-	Row counts between A and B should be same. Column count doesn't matter.
-	Function returns concatenated matrix of A and Z-scored matrix B
     '''
-	agent = stats.zscore(B[:,0])
-	patient = stats.zscore(B[:,1])
-	attr = stats.zscore(B[:,2])
-	mod = stats.zscore(B[:,3])
-	grammar_matrix = np.column_stack((agent,patient,attr,mod))
-	return np.concatenate((A,grammar_matrix), axis=1)
+    Z-score matrix B and combine it with matrix A.
+    Row counts between A and B should be same. Column count doesn't matter.
+    Function returns concatenated matrix of A and Z-scored matrix B
+    '''
+    agent = stats.zscore(B[:,0])
+    patient = stats.zscore(B[:,1])
+    attr = stats.zscore(B[:,2])
+    mod = stats.zscore(B[:,3])
+    grammar_matrix = np.column_stack((agent,patient,attr,mod))
+    return np.concatenate((A,grammar_matrix), axis=1)
 
 def clustering(num, matrix, query=True, characters=[]):
-	'''
+    '''
     Optimize k-means clustering on inputted 'matrix' across 'num' number 
     of possible clusters. 
 
-	query=True state:
+    query=True state:
     Function plots 2 figures of inertia change as number of clusters 
     increment. 
 
@@ -195,10 +194,10 @@ def clustering(num, matrix, query=True, characters=[]):
     User can iput number ('num') of clusters to group data in 'matrix'.
     Function returns 3 variables: 1) overall percentage distribution of 
     data in 'num' number of clusters, 2) dictionary to look up which 
-	cluster each character ('characters') is assigned 
-	{'character': cluster # (int)}
-	, and 3) dictionary	to look up which characters a cluster contains
-	{cluster # (int): ['character 1', 'character 2']}
+    cluster each character ('characters') is assigned 
+    {'character': cluster # (int)}
+    , and 3) dictionary to look up which characters a cluster contains
+    {cluster # (int): ['character 1', 'character 2']}
     '''
 
     if query:
@@ -254,20 +253,20 @@ def clustering(num, matrix, query=True, characters=[]):
         return overallDist, charact_assign, cluster_assign
 
 def validation(characterlist, similarity, char_assign):
-	'''
-	Counts the number of overlap in character similarity based on cosine
-	similarity analysis vs. character groupings based on k-means clustering.
-	Function returns 2 variables: 
-	1) accuracy (as overlap between the two analyses)
-	2) dictionary of each character's list of related characters as 
-	calculated by cosine similarity analysis (this dictionary contains
-	3 lists of the top three closely related characters (totalling 9); the 
-	first list is the top three characters as judged by magnitude of cosine
-	similarity, the second list as judged by positive similarity, and third
-	list as judged by negative similarity, i.e. opposite or foil characters)
-	{'character': [mag#1,.., mag#3, similar#1,.., similar#3, opposite#1, .., 
-	opposite#3]}
-	'''
+    '''
+    Counts the number of overlap in character similarity based on cosine
+    similarity analysis vs. character groupings based on k-means clustering.
+    Function returns 2 variables: 
+    1) accuracy (as overlap between the two analyses)
+    2) dictionary of each character's list of related characters as 
+    calculated by cosine similarity analysis (this dictionary contains
+    3 lists of the top three closely related characters (totalling 9); the 
+    first list is the top three characters as judged by magnitude of cosine
+    similarity, the second list as judged by positive similarity, and third
+    list as judged by negative similarity, i.e. opposite or foil characters)
+    {'character': [mag#1,.., mag#3, similar#1,.., similar#3, opposite#1, .., 
+    opposite#3]}
+    '''
     char_ind = collections.defaultdict(list)
     for c,character in enumerate(characterlist):
         char_ind[character]=c
@@ -327,5 +326,5 @@ def main(dir_path):
     print accuracy
 
 if __name__ == '__main__':
-	# main('/home/eshaw/Documents/NLP/eshaw2-finalproject/')
-	main(sys.argv[1])
+    # main('/home/eshaw/Documents/NLP/eshaw2-finalproject/')
+    main(sys.argv[1])
